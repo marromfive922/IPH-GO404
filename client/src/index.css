@@ -76,6 +76,18 @@
   --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.623 0.214 259.815);
+  /* IPH Mandume Custom Colors */
+  --iph-primary: #0a2f44;
+  --iph-primary-light: #1a4b6d;
+  --iph-secondary: #f4c542;
+  --iph-accent: #3498db;
+  --iph-success: #27ae60;
+  --iph-danger: #e74c3c;
+  --iph-bg-body: #f0f4f8;
+  --iph-bg-card: #ffffff;
+  --iph-text-main: #1e2b3c;
+  --iph-text-muted: #5a6a7d;
+  --iph-border-color: #e1e8ef;
 }
 
 .dark {
@@ -134,6 +146,65 @@
 }
 
 @layer components {
+  /* IPH Mandume Custom Components */
+  .btn-iph-primary {
+    @apply bg-[#0a2f44] text-white px-6 py-3 rounded-full font-bold hover:bg-[#1a4b6d] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+  }
+
+  .btn-iph-secondary {
+    @apply bg-[#f0f4f8] text-[#1e2b3c] px-6 py-3 rounded-full font-bold border border-[#e1e8ef] hover:border-[#3498db] hover:text-[#3498db] transition-all duration-300;
+  }
+
+  .card-iph {
+    @apply bg-[#ffffff] rounded-2xl p-6 shadow-md border border-[#e1e8ef] transition-all duration-300 hover:shadow-lg;
+  }
+
+  .option-card-iph {
+    @apply w-full p-4 rounded-lg border-2 border-[#e1e8ef] cursor-pointer transition-all duration-300 hover:border-[#3498db] hover:bg-blue-50;
+  }
+
+  .option-card-iph.selected {
+    @apply border-[#3498db] bg-blue-50;
+  }
+
+  .option-card-iph.correct {
+    @apply border-[#27ae60] bg-green-50 text-[#27ae60];
+  }
+
+  .option-card-iph.incorrect {
+    @apply border-[#e74c3c] bg-red-50 text-[#e74c3c];
+  }
+
+  .progress-iph {
+    @apply h-2 bg-[#f0f4f8] rounded-full overflow-hidden;
+  }
+
+  .progress-fill-iph {
+    @apply h-full bg-[#3498db] transition-all duration-500;
+  }
+
+  .badge-iph {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-[#0a2f44] text-white;
+  }
+
+  .nav-tab-iph {
+    @apply px-4 py-2 rounded-full font-medium transition-all duration-300 bg-white border border-[#e1e8ef] hover:border-[#3498db] hover:text-[#3498db];
+  }
+
+  .nav-tab-iph.active {
+    @apply bg-[#0a2f44] text-white border-[#0a2f44];
+  }
+
+  .feedback-success-iph {
+    @apply p-4 rounded-lg font-semibold flex items-center gap-3 bg-green-100 text-[#27ae60];
+  }
+
+  .feedback-error-iph {
+    @apply p-4 rounded-lg font-semibold flex items-center gap-3 bg-red-100 text-[#e74c3c];
+  }
+
+  /* Original components */
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *
@@ -174,4 +245,46 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+}
+
+/* IPH Mandume Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

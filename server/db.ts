@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, disciplines, questions, userScores, exams, Discipline, Question, UserScore, Exam } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,117 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ===== QUIZ HELPERS =====
+
+export async function getDisciplines(): Promise<Discipline[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(disciplines);
+}
+
+export async function getQuestionsByDiscipline(disciplineId: number): Promise<Question[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(questions).where(eq(questions.disciplineId, disciplineId));
+}
+
+export async function getUserScore(userId: number, disciplineId: number): Promise<UserScore | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(userScores).where(
+    and(eq(userScores.userId, userId), eq(userScores.disciplineId, disciplineId))
+  ).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateUserScore(
+  userId: number,
+  disciplineId: number,
+  isCorrect: boolean
+): Promise<UserScore> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await getUserScore(userId, disciplineId);
+  const now = new Date();
+
+  if (existing) {
+    const updated = await db.update(userScores)
+      .set({
+        score: existing.score + (isCorrect ? 10 : 0),
+        totalAttempts: existing.totalAttempts + 1,
+        correctAnswers: existing.correctAnswers + (isCorrect ? 1 : 0),
+        lastAttemptAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(eq(userScores.userId, userId), eq(userScores.disciplineId, disciplineId))
+      );
+    
+    const result = await getUserScore(userId, disciplineId);
+    return result!;
+  } else {
+    await db.insert(userScores).values({
+      userId,
+      disciplineId,
+      score: isCorrect ? 10 : 0,
+      totalAttempts: 1,
+      correctAnswers: isCorrect ? 1 : 0,
+      lastAttemptAt: now,
+    });
+    
+    const result = await getUserScore(userId, disciplineId);
+    return result!;
+  }
+}
+
+export async function getUserGlobalScore(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const result = await db.select().from(userScores).where(eq(userScores.userId, userId));
+  return result.reduce((sum, score) => sum + score.score, 0);
+}
+
+// ===== EXAM HELPERS =====
+
+export async function getExamsByDiscipline(disciplineId: number): Promise<Exam[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(exams)
+    .where(eq(exams.disciplineId, disciplineId))
+    .orderBy(desc(exams.year));
+}
+
+export async function getAllExams(): Promise<Exam[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(exams).orderBy(desc(exams.year));
+}
+
+export async function createExam(exam: {
+  disciplineId: number;
+  title: string;
+  year: number;
+  type: 'frequency' | 'final' | 'resource';
+  fileKey: string;
+  fileUrl: string;
+  uploadedBy: number;
+}): Promise<Exam> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(exams).values(exam);
+  const newExam = await db.select().from(exams)
+    .where(eq(exams.id, result[0].insertId as number))
+    .limit(1);
+  
+  return newExam[0]!;
+}
+
+export async function deleteExam(examId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(exams).where(eq(exams.id, examId));
+}

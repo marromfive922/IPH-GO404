@@ -1,4 +1,5 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json } from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
 
 /**
  * Core user table backing auth flow.
@@ -6,12 +7,7 @@ import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-or
  * Columns use camelCase to match both database fields and generated types.
  */
 export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
@@ -25,4 +21,62 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+// Disciplinas de estudo
+export const disciplines = mysqlTable("disciplines", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  icon: varchar("icon", { length: 50 }).notNull(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Discipline = typeof disciplines.$inferSelect;
+export type InsertDiscipline = typeof disciplines.$inferInsert;
+
+// Questões de quiz
+export const questions = mysqlTable("questions", {
+  id: int("id").autoincrement().primaryKey(),
+  disciplineId: int("disciplineId").notNull(),
+  text: text("text").notNull(),
+  options: json("options").$type<string[]>().notNull(),
+  correctOptionIndex: int("correctOptionIndex").notNull(),
+  explanation: text("explanation"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Question = typeof questions.$inferSelect;
+export type InsertQuestion = typeof questions.$inferInsert;
+
+// Pontuação global do utilizador
+export const userScores = mysqlTable("userScores", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  disciplineId: int("disciplineId").notNull(),
+  score: int("score").default(0).notNull(),
+  totalAttempts: int("totalAttempts").default(0).notNull(),
+  correctAnswers: int("correctAnswers").default(0).notNull(),
+  lastAttemptAt: timestamp("lastAttemptAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserScore = typeof userScores.$inferSelect;
+export type InsertUserScore = typeof userScores.$inferInsert;
+
+// Exames passados
+export const exams = mysqlTable("exams", {
+  id: int("id").autoincrement().primaryKey(),
+  disciplineId: int("disciplineId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  year: int("year").notNull(),
+  type: mysqlEnum("type", ["frequency", "final", "resource"]).notNull(),
+  fileKey: varchar("fileKey", { length: 255 }).notNull(),
+  fileUrl: varchar("fileUrl", { length: 500 }).notNull(),
+  uploadedBy: int("uploadedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Exam = typeof exams.$inferSelect;
+export type InsertExam = typeof exams.$inferInsert;
