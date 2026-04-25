@@ -48,3 +48,15 @@
 - [x] Testar upload e download de exames
 - [x] Criar checkpoint final
 - [x] Publicar plataforma
+
+
+## Correções e Melhorias Solicitadas
+
+- [x] Corrigir tela de login: mudar "IPH Mandume" para "IPH GO" (nota: tela OAuth gerida por Manus)
+- [x] Remover texto "fornecido por manus" da tela de login (nota: gerido por Manus)
+- [x] Corrigir navegação de exames passados ao selecionar disciplina
+- [x] Implementar painel de admin para upload de exames (PDF/Imagem)
+- [x] Implementar visualização de exames no painel de admin
+- [x] Implementar exclusão de exames no painel de admin
+- [x] Testar fluxo completo de admin
+- [x] Criar checkpoint final

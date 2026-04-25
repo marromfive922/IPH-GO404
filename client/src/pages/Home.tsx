@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, BookOpen, Award, Users, Zap } from "lucide-react";
+import { Loader2, BookOpen, Award, Users, Zap, Settings } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -45,6 +45,15 @@ export default function Home() {
             {isAuthenticated ? (
               <>
                 <span className="text-sm opacity-80">Olá, {user?.name}</span>
+                {user?.role === 'admin' && (
+                  <Button
+                    onClick={() => setLocation('/admin')}
+                    variant="outline"
+                    className="text-white border-white hover:bg-white hover:text-[#0a2f44]"
+                  >
+                    Painel Admin
+                  </Button>
+                )}
                 <Button
                   onClick={() => logout()}
                   variant="outline"

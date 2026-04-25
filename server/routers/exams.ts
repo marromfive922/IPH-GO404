@@ -40,6 +40,18 @@ export const examsRouter = router({
       }
 
       try {
+        // Determine MIME type based on file extension
+        const fileName = input.fileName.toLowerCase();
+        let mimeType = "application/pdf";
+        
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+          mimeType = "image/jpeg";
+        } else if (fileName.endsWith(".png")) {
+          mimeType = "image/png";
+        } else if (fileName.endsWith(".webp")) {
+          mimeType = "image/webp";
+        }
+
         // Convert base64 to buffer
         const buffer = Buffer.from(input.fileData, "base64");
 
@@ -47,7 +59,7 @@ export const examsRouter = router({
         const { url, key } = await storagePut(
           `exams/${input.disciplineId}/${Date.now()}-${input.fileName}`,
           buffer,
-          "application/pdf"
+          mimeType
         );
 
         // Save to database
