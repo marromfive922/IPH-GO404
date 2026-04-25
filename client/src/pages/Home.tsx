@@ -36,7 +36,7 @@ export default function Home() {
               <i className="fas fa-microchip"></i>
             </div>
             <div>
-              <h1 className="text-xl font-bold">IPH Mandume</h1>
+              <h1 className="text-xl font-bold">IPH GO</h1>
               <p className="text-xs opacity-80">Plataforma de Estudos</p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function Home() {
                 Prepare-se para o Sucesso
               </h2>
               <p className="text-lg opacity-90 mb-8">
-                Plataforma interativa de estudo para Engenharia Informática. Quizzes, exames passados e acompanhamento de progresso em tempo real.
+                Plataforma interativa de estudo para Engenharia Informática. Quiz, exames passados e acompanhamento de progresso em tempo real, especificamente para estudantes do IPH e outras faculdades.
               </p>
               <div className="flex gap-4">
                 {isAuthenticated ? (
@@ -140,7 +140,7 @@ export default function Home() {
       <div className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-[#0a2f44] text-center mb-12">
-            Por Que Escolher IPH Mandume?
+            Por Que Escolher IPH GO?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -148,9 +148,9 @@ export default function Home() {
               <div className="w-12 h-12 rounded-lg bg-[#ecf3fa] flex-center text-2xl text-[#3498db] mx-auto mb-4">
                 <BookOpen />
               </div>
-              <h3 className="font-bold text-[#0a2f44] mb-2">Quizzes Interativos</h3>
+              <h3 className="font-bold text-[#0a2f44] mb-2">Quiz Interativo</h3>
               <p className="text-[#5a6a7d] text-sm">
-                Pratique com questões embaralhadas e feedback imediato
+                Pratique com questões e feedback imediato
               </p>
             </Card>
 
@@ -230,7 +230,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold mb-4">Pronto para Começar?</h2>
             <p className="text-lg opacity-90 mb-8">
-              Faça login para aceder aos quizzes, exames passados e acompanhe seu progresso.
+              Faça login para aceder ao quiz, exames passados e acompanhe seu progresso.
             </p>
             <Button
               onClick={() => window.location.href = getLoginUrl()}
@@ -246,10 +246,10 @@ export default function Home() {
       <footer className="bg-[#0a2f44] text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="opacity-80">
-            © 2024 IPH Mandume - Plataforma de Estudos. Todos os direitos reservados.
+            © 2026 IPH GO - Plataforma de Estudos. Todos os direitos reservados.
           </p>
           <p className="text-sm opacity-60 mt-2">
-            Engenharia Informática • Universidade Mandume Ya Ndemufayo
+            Engenharia Informática • IPH GO • Alessandro Da Silva
           </p>
         </div>
       </footer>
