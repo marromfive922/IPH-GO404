@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, BookOpen, Award, Users, Zap, Settings } from "lucide-react";
+import { Loader2, BookOpen, Award, Users, Zap, Settings, BookMarked } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -215,14 +215,23 @@ export default function Home() {
                       <h3 className="font-bold text-[#0a2f44] mb-1">{discipline.name}</h3>
                       <p className="text-[#5a6a7d] text-sm mb-3">{discipline.description}</p>
                       {isAuthenticated && (
-                        <Button
-                          onClick={() => setLocation("/quiz")}
-                          variant="outline"
-                          size="sm"
-                          className="text-[#3498db] border-[#3498db] hover:bg-blue-50"
-                        >
-                          Estudar
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => setLocation(`/study?discipline=${discipline.slug}`)}
+                            variant="outline"
+                            size="sm"
+                            className="text-[#3498db] border-[#3498db] hover:bg-blue-50"
+                          >
+                            Material
+                          </Button>
+                          <Button
+                            onClick={() => setLocation("/quiz")}
+                            size="sm"
+                            className="btn-iph-primary"
+                          >
+                            Quiz
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </div>

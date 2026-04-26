@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
@@ -9,13 +8,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
 
 export default function AdminPanel() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'manage'>('manage');
+  const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'disciplines'>('manage');
+  const [disciplineForm, setDisciplineForm] = useState({
+    name: '',
+    slug: '',
+    icon: 'fa-book',
+    description: '',
+  });
   const [uploadData, setUploadData] = useState({
     disciplineId: '',
     title: '',
@@ -43,7 +49,19 @@ export default function AdminPanel() {
   const { data: exams, isLoading, refetch } = trpc.exams.listAll.useQuery();
 
   // Get disciplines for upload form
-  const { data: disciplines } = trpc.quiz.getDisciplines.useQuery();
+  const { data: disciplines, refetch: refetchDisciplines } = trpc.quiz.getDisciplines.useQuery();
+
+  // Create discipline mutation
+  const createDisciplineMutation = trpc.quiz.createDiscipline.useMutation({
+    onSuccess: () => {
+      toast.success('Disciplina criada com sucesso!');
+      setDisciplineForm({ name: '', slug: '', icon: 'fa-book', description: '' });
+      refetchDisciplines();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Erro ao criar disciplina');
+    },
+  });
 
   // Upload mutation
   const uploadMutation = trpc.exams.upload.useMutation({
@@ -58,7 +76,6 @@ export default function AdminPanel() {
         type: 'frequency',
       });
       refetch();
-      setActiveTab('manage');
     },
     onError: (error) => {
       toast.error(error.message || 'Erro ao enviar exame');
@@ -79,18 +96,13 @@ export default function AdminPanel() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-      if (validTypes.includes(file.type)) {
-        setSelectedFile(file);
-        
-        // Create preview
+      setSelectedFile(file);
+      if (file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (event) => {
-          setPreviewUrl(event.target?.result as string);
-        };
+        reader.onload = (e) => setPreviewUrl(e.target?.result as string);
         reader.readAsDataURL(file);
       } else {
-        toast.error('Por favor, selecione um ficheiro PDF ou imagem (JPG, PNG, WebP)');
+        setPreviewUrl(null);
       }
     }
   };
@@ -101,60 +113,46 @@ export default function AdminPanel() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const fileData = e.target?.result as string;
-      const base64Data = fileData.split(',')[1];
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('disciplineId', uploadData.disciplineId);
+    formData.append('title', uploadData.title);
+    formData.append('year', uploadData.year);
+    formData.append('type', uploadData.type);
 
-      await uploadMutation.mutateAsync({
-        disciplineId: parseInt(uploadData.disciplineId),
-        title: uploadData.title,
-        year: parseInt(uploadData.year),
-        type: uploadData.type,
-        fileData: base64Data,
-        fileName: selectedFile.name,
-      });
-    };
-    reader.readAsDataURL(selectedFile);
+    uploadMutation.mutate(formData as any);
   };
 
-  const handleDelete = (examId: number) => {
-    if (confirm('Tem a certeza que deseja eliminar este exame?')) {
-      deleteMutation.mutate({ examId });
-    }
-  };
-
-  const groupedExams = exams?.reduce(
-    (acc, exam) => {
-      const discipline = disciplines?.find((d) => d.id === exam.disciplineId);
-      const key = discipline?.name || 'Desconhecida';
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(exam);
-      return acc;
-    },
-    {} as Record<string, typeof exams>
-  );
+  const groupedExams = exams?.reduce((acc, exam) => {
+    const discipline = disciplines?.find((d) => d.id === exam.disciplineId);
+    const name = discipline?.name || 'Sem Disciplina';
+    if (!acc[name]) acc[name] = [];
+    acc[name].push(exam);
+    return acc;
+  }, {} as Record<string, typeof exams>);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div>
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setLocation('/')}
-              className="text-[#0a2f44] border-[#0a2f44]"
+              className="mb-4 text-white border-white hover:bg-white hover:text-[#0a2f44]"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
+            <h1 className="text-4xl font-bold mb-2">Painel de Administração</h1>
+            <p className="text-lg opacity-90">Gerir exames e conteúdos da plataforma</p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0a2f44] mb-2">Painel de Administração</h1>
-          <p className="text-lg text-[#5a6a7d]">Gerir exames e conteúdos da plataforma</p>
         </div>
+      </div>
 
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-[#e1e8ef]">
           <button
@@ -177,6 +175,16 @@ export default function AdminPanel() {
           >
             Enviar Novo Exame
           </button>
+          <button
+            onClick={() => setActiveTab('disciplines')}
+            className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+              activeTab === 'disciplines'
+                ? 'border-[#3498db] text-[#3498db]'
+                : 'border-transparent text-[#5a6a7d] hover:text-[#0a2f44]'
+            }`}
+          >
+            Criar Disciplina
+          </button>
         </div>
 
         {/* Upload Tab */}
@@ -184,7 +192,7 @@ export default function AdminPanel() {
           <div className="max-w-2xl">
             <Card className="card-iph p-8">
               <div className="space-y-6">
-                {/* Discipline */}
+                {/* Discipline Select */}
                 <div>
                   <label className="block text-sm font-medium text-[#0a2f44] mb-2">Disciplina *</label>
                   <Select value={uploadData.disciplineId} onValueChange={(value) => setUploadData({ ...uploadData, disciplineId: value })}>
@@ -203,7 +211,7 @@ export default function AdminPanel() {
 
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Título *</label>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Título do Exame *</label>
                   <Input
                     placeholder="Ex: Exame Final 2024"
                     value={uploadData.title}
@@ -218,8 +226,6 @@ export default function AdminPanel() {
                     <label className="block text-sm font-medium text-[#0a2f44] mb-2">Ano *</label>
                     <Input
                       type="number"
-                      min="2000"
-                      max={new Date().getFullYear()}
                       value={uploadData.year}
                       onChange={(e) => setUploadData({ ...uploadData, year: e.target.value })}
                       className="border-[#e1e8ef]"
@@ -243,42 +249,24 @@ export default function AdminPanel() {
                 {/* File Upload */}
                 <div>
                   <label className="block text-sm font-medium text-[#0a2f44] mb-2">Ficheiro (PDF ou Imagem) *</label>
-                  <Input 
-                    type="file" 
-                    accept=".pdf,.jpg,.jpeg,.png,.webp" 
+                  <input
+                    type="file"
+                    accept=".pdf,image/*"
                     onChange={handleFileSelect}
-                    className="border-[#e1e8ef]"
+                    className="block w-full text-sm text-[#5a6a7d] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#ecf3fa] file:text-[#3498db] hover:file:bg-[#d4e8f7]"
                   />
-                  {selectedFile && (
-                    <p className="text-sm text-[#27ae60] mt-2">✓ {selectedFile.name}</p>
-                  )}
                 </div>
 
                 {/* Preview */}
                 {previewUrl && (
                   <div>
-                    <label className="block text-sm font-medium text-[#0a2f44] mb-2">Pré-visualização</label>
-                    <div className="border border-[#e1e8ef] rounded-lg p-4 bg-white">
-                      {selectedFile?.type === 'application/pdf' ? (
-                        <div className="flex items-center justify-center h-48 bg-gray-100 rounded">
-                          <div className="text-center">
-                            <i className="fas fa-file-pdf text-4xl text-red-500 mb-2"></i>
-                            <p className="text-sm text-[#5a6a7d]">Ficheiro PDF</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <img src={previewUrl} alt="Preview" className="max-h-48 mx-auto rounded" />
-                      )}
-                    </div>
+                    <p className="text-sm font-medium text-[#0a2f44] mb-2">Pré-visualização</p>
+                    <img src={previewUrl} alt="Preview" className="max-h-64 rounded-lg border border-[#e1e8ef]" />
                   </div>
                 )}
 
-                {/* Submit Button */}
-                <Button 
-                  onClick={handleUpload} 
-                  disabled={uploadMutation.isPending || !selectedFile}
-                  className="btn-iph-primary w-full"
-                >
+                {/* Upload Button */}
+                <Button onClick={handleUpload} disabled={uploadMutation.isPending} className="btn-iph-primary w-full">
                   {uploadMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -352,14 +340,15 @@ export default function AdminPanel() {
                               <a href={exam.fileUrl} download className="flex-1">
                                 <Button variant="outline" size="sm" className="w-full">
                                   <Download className="w-4 h-4 mr-1" />
-                                  Download
+                                  Descarregar
                                 </Button>
                               </a>
                               <Button
+                                onClick={() => deleteMutation.mutate({ examId: exam.id })}
+                                disabled={deleteMutation.isPending}
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleDelete(exam.id)}
-                                disabled={deleteMutation.isPending}
+                                className="flex-1"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -372,6 +361,78 @@ export default function AdminPanel() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Disciplines Tab */}
+        {activeTab === 'disciplines' && (
+          <div className="max-w-2xl">
+            <Card className="card-iph p-8">
+              <div className="space-y-6">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Nome da Disciplina *</label>
+                  <Input
+                    placeholder="Ex: Programação Web"
+                    value={disciplineForm.name}
+                    onChange={(e) => setDisciplineForm({ ...disciplineForm, name: e.target.value })}
+                    className="border-[#e1e8ef]"
+                  />
+                </div>
+
+                {/* Slug */}
+                <div>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Slug (URL-friendly) *</label>
+                  <Input
+                    placeholder="Ex: prog-web"
+                    value={disciplineForm.slug}
+                    onChange={(e) => setDisciplineForm({ ...disciplineForm, slug: e.target.value })}
+                    className="border-[#e1e8ef]"
+                  />
+                </div>
+
+                {/* Icon */}
+                <div>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Ícone (FontAwesome) *</label>
+                  <Input
+                    placeholder="Ex: fa-code"
+                    value={disciplineForm.icon}
+                    onChange={(e) => setDisciplineForm({ ...disciplineForm, icon: e.target.value })}
+                    className="border-[#e1e8ef]"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Descrição</label>
+                  <Input
+                    placeholder="Descrição breve da disciplina"
+                    value={disciplineForm.description}
+                    onChange={(e) => setDisciplineForm({ ...disciplineForm, description: e.target.value })}
+                    className="border-[#e1e8ef]"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  onClick={() => createDisciplineMutation.mutate(disciplineForm)}
+                  disabled={createDisciplineMutation.isPending || !disciplineForm.name || !disciplineForm.slug}
+                  className="btn-iph-primary w-full"
+                >
+                  {createDisciplineMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Criando...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Criar Disciplina
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
           </div>
         )}
       </div>

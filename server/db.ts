@@ -97,6 +97,30 @@ export async function getDisciplines(): Promise<Discipline[]> {
   return db.select().from(disciplines);
 }
 
+export async function createDiscipline(
+  name: string,
+  slug: string,
+  icon: string,
+  description: string
+): Promise<Discipline> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(disciplines).values({
+    name,
+    slug,
+    icon,
+    description,
+  });
+  
+  // Get the created discipline
+  const created = await db.select().from(disciplines)
+    .where(eq(disciplines.slug, slug))
+    .limit(1);
+  
+  return created[0]!;
+}
+
 export async function getQuestionsByDiscipline(disciplineId: number): Promise<Question[]> {
   const db = await getDb();
   if (!db) return [];

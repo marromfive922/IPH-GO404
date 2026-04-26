@@ -60,3 +60,14 @@
 - [x] Implementar exclusão de exames no painel de admin
 - [x] Testar fluxo completo de admin
 - [x] Criar checkpoint final
+
+
+## Novas Funcionalidades - Disciplinas e Estudo
+
+- [x] Adicionar 12 novas disciplinas à base de dados
+- [x] Criar seed script com todas as disciplinas
+- [x] Implementar funcionalidade de criar disciplina no painel de admin
+- [x] Criar página de estudo (StudyMaterial.tsx) com matéria explicada
+- [x] Adicionar botão "Estudar" nas disciplinas que leva para a página de matéria
+- [x] Testar fluxo completo de disciplinas e estudo
+- [x] Criar checkpoint final

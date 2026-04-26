@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import {
   getDisciplines,
@@ -6,6 +7,7 @@ import {
   getUserScore,
   updateUserScore,
   getUserGlobalScore,
+  createDiscipline,
 } from "../db";
 
 export const quizRouter = router({
@@ -13,6 +15,46 @@ export const quizRouter = router({
   getDisciplines: publicProcedure.query(async () => {
     return getDisciplines();
   }),
+
+  // Create a new discipline (admin only)
+  createDiscipline: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        slug: z.string().min(1),
+        icon: z.string().default('fa-book'),
+        description: z.string().default(''),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== 'admin') {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Only administrators can create disciplines',
+        });
+      }
+
+      try {
+        const discipline = await createDiscipline(
+          input.name,
+          input.slug,
+          input.icon,
+          input.description
+        );
+        return discipline;
+      } catch (error) {
+        if ((error as any).code === 'ER_DUP_ENTRY') {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Disciplina com este slug ja existe',
+          });
+        }
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Erro ao criar disciplina',
+        });
+      }
+    }),
 
   // Get questions for a specific discipline
   getQuestions: publicProcedure.input(z.object({ disciplineId: z.number() })).query(async ({ input }) => {
