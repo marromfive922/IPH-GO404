@@ -71,3 +71,12 @@
 - [x] Adicionar botão "Estudar" nas disciplinas que leva para a página de matéria
 - [x] Testar fluxo completo de disciplinas e estudo
 - [x] Criar checkpoint final
+
+
+## Correções Prioritárias - Bugs Reportados
+
+- [x] Diagnosticar e corrigir erro de upload de exames
+- [x] Modificar botão Quiz para abrir direto o quiz da disciplina
+- [x] Testar upload de exames com PDF e imagens
+- [x] Testar navegação direta para quiz
+- [x] Criar checkpoint com correções

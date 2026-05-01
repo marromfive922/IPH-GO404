@@ -113,14 +113,22 @@ export default function AdminPanel() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('disciplineId', uploadData.disciplineId);
-    formData.append('title', uploadData.title);
-    formData.append('year', uploadData.year);
-    formData.append('type', uploadData.type);
-
-    uploadMutation.mutate(formData as any);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64Data = (reader.result as string).split(',')[1];
+      uploadMutation.mutate({
+        disciplineId: parseInt(uploadData.disciplineId),
+        title: uploadData.title,
+        year: parseInt(uploadData.year),
+        type: uploadData.type,
+        fileData: base64Data,
+        fileName: selectedFile.name,
+      });
+    };
+    reader.onerror = () => {
+      toast.error('Erro ao ler o ficheiro');
+    };
+    reader.readAsDataURL(selectedFile);
   };
 
   const groupedExams = exams?.reduce((acc, exam) => {

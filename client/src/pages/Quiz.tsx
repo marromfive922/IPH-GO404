@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Loader2, ChevronRight, Trophy, RotateCcw } from 'lucide-react';
-import { useLocation } from 'wouter';
+import { useLocation, useParams } from 'wouter';
 
 interface Question {
   id: number;
@@ -16,7 +16,10 @@ interface Question {
 export default function Quiz() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
-  const [disciplineId, setDisciplineId] = useState<number | null>(null);
+  const params = useParams<{ disciplineId?: string }>();
+  const [disciplineId, setDisciplineId] = useState<number | null>(
+    params.disciplineId ? parseInt(params.disciplineId) : null
+  );
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -45,6 +48,12 @@ export default function Quiz() {
 
   const currentQuestion = questions?.[currentQuestionIndex];
   const progress = disciplineId && questions ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
+
+  useEffect(() => {
+    if (params.disciplineId && !disciplineId) {
+      setDisciplineId(parseInt(params.disciplineId));
+    }
+  }, [params.disciplineId]);
 
   const handleSelectDiscipline = (id: number) => {
     setDisciplineId(id);

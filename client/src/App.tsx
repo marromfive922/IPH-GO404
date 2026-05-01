@@ -14,7 +14,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path={"/quiz"} component={Quiz} />
+      <Route path={"/quiz/:disciplineId?"} component={Quiz} />
       <Route path={"/exams"} component={Exams} />
       <Route path={"/admin"} component={AdminPanel} />
       <Route path={"/study"} component={StudyMaterial} />
