@@ -401,7 +401,7 @@ export default function AdminPanel() {
 
                 {/* Icon */}
                 <div>
-                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Ícone (FontAwesome) *</label>
+                  <label className="block text-sm font-medium text-[#0a2f44] mb-2">Icone (FontAwesome) *</label>
                   <Input
                     placeholder="Ex: fa-code"
                     value={disciplineForm.icon}

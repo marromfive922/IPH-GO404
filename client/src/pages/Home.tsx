@@ -224,13 +224,6 @@ export default function Home() {
                           >
                             Material
                           </Button>
-                          <Button
-                            onClick={() => setLocation(`/quiz/${discipline.id}`)}
-                            size="sm"
-                            className="btn-iph-primary"
-                          >
-                            Quiz
-                          </Button>
                         </div>
                       )}
                     </div>

@@ -80,3 +80,13 @@
 - [x] Testar upload de exames com PDF e imagens
 - [x] Testar navegação direta para quiz
 - [x] Criar checkpoint com correções
+
+
+## Correções Adicionais - Conteúdo e Navegação
+
+- [x] Diagnosticar e corrigir erro ao clicar em disciplinas
+- [x] Adicionar conteúdo de material para todas as 17 disciplinas
+- [x] Adicionar questões de quiz para todas as 17 disciplinas
+- [x] Remover botão Quiz da navegação ao lado de Exames Passados
+- [x] Testar navegação e carregamento de conteúdo
+- [x] Criar checkpoint final

@@ -28,6 +28,7 @@ export const disciplines = mysqlTable("disciplines", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   icon: varchar("icon", { length: 50 }).notNull(),
   description: text("description"),
+  material: text("material"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
