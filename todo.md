@@ -90,3 +90,14 @@
 - [x] Remover botão Quiz da navegação ao lado de Exames Passados
 - [x] Testar navegação e carregamento de conteúdo
 - [x] Criar checkpoint final
+
+
+## Correções Finais - Bugs e Funcionalidades
+
+- [x] Corrigir erro "não encontrada" ao clicar em Material de disciplinas
+- [x] Restaurar botão Quiz nas disciplinas
+- [x] Remover botão "Iniciar Quiz" do topo (ao lado de Exames Passados)
+- [x] Adicionar conteúdo de matéria para disciplinas faltantes
+- [x] Adicionar quiz para disciplinas faltantes
+- [x] Testar navegação de Material e Quiz
+- [x] Criar checkpoint final

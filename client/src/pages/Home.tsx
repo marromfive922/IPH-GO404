@@ -89,13 +89,6 @@ export default function Home() {
                 {isAuthenticated ? (
                   <>
                     <Button
-                      onClick={() => setLocation("/quiz")}
-                      className="bg-[#f4c542] text-[#0a2f44] hover:bg-yellow-400 font-bold"
-                    >
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      Iniciar Quiz
-                    </Button>
-                    <Button
                       onClick={() => setLocation("/exams")}
                       variant="outline"
                       className="border-white text-white hover:bg-white hover:text-[#0a2f44]"
@@ -223,6 +216,13 @@ export default function Home() {
                             className="text-[#3498db] border-[#3498db] hover:bg-blue-50"
                           >
                             Material
+                          </Button>
+                          <Button
+                            onClick={() => setLocation(`/quiz/${discipline.id}`)}
+                            size="sm"
+                            className="btn-iph-primary"
+                          >
+                            Quiz
                           </Button>
                         </div>
                       )}
