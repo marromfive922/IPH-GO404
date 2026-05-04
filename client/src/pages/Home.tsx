@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loader2, BookOpen, Award, Users, Zap, Settings, BookMarked } from "lucide-react";
@@ -30,34 +31,34 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Navigation */}
       <nav className="bg-[#0a2f44] text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#f4c542] flex-center text-[#0a2f44] font-bold text-lg">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-lg bg-[#f4c542] flex-center text-[#0a2f44] font-bold text-sm sm:text-lg">
               <i className="fas fa-microchip"></i>
             </div>
             <div>
-              <h1 className="text-xl font-bold">IPH GO</h1>
+              <h1 className="text-lg sm:text-xl font-bold">IPH GO</h1>
               <p className="text-xs opacity-80">Plataforma de Estudos</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {isAuthenticated ? (
               <>
-                <span className="text-sm opacity-80">Olá, {user?.name}</span>
+                <span className="text-xs sm:text-sm opacity-80 hidden sm:inline">Olá, {user?.name}</span>
                 {user?.role === 'admin' && (
                   <Button
                     onClick={() => setLocation('/admin')}
                     variant="outline"
-                    className="text-white border-white hover:bg-white hover:text-[#0a2f44]"
+                    className="text-white border-white hover:bg-white hover:text-[#0a2f44] text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-4"
                   >
-                    Painel Admin
+                    Admin
                   </Button>
                 )}
                 <Button
                   onClick={() => logout()}
                   variant="outline"
-                  className="text-white border-white hover:bg-white hover:text-[#0a2f44]"
+                  className="text-white border-white hover:bg-white hover:text-[#0a2f44] text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-4"
                 >
                   Sair
                 </Button>
@@ -75,17 +76,17 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white py-16 md:py-24">
+      <div className="bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white py-12 sm:py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
                 Prepare-se para o Sucesso
               </h2>
-              <p className="text-lg opacity-90 mb-8">
+              <p className="text-base sm:text-lg opacity-90 mb-6 sm:mb-8">
                 Plataforma interativa de estudo para Engenharia Informática. Quiz, exames passados e acompanhamento de progresso em tempo real, especificamente para estudantes do IPH e outras faculdades.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                 {isAuthenticated ? (
                   <>
                     <Button

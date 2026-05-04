@@ -83,11 +83,11 @@ export default function Quiz() {
       setScore(result.score);
       setTotalAttempts(result.totalAttempts);
 
-      // Auto-advance after 1.5s if correct
+      // Auto-advance after 3s if correct (immediate green feedback)
       if (result.isCorrect) {
         setTimeout(() => {
           handleNextQuestion();
-        }, 1500);
+        }, 3000);
       }
     } catch (error) {
       console.error('Failed to submit answer:', error);
@@ -143,9 +143,9 @@ export default function Quiz() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#0a2f44] mb-2">Quizzes Interativos</h1>
-            <p className="text-lg text-[#5a6a7d]">Escolha uma disciplina para começar</p>
+          <div className="mb-8 sm:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0a2f44] mb-2">Quizzes Interativos</h1>
+            <p className="text-base sm:text-lg text-[#5a6a7d]">Escolha uma disciplina para começar</p>
           </div>
 
           {disciplinesLoading ? (
@@ -153,7 +153,7 @@ export default function Quiz() {
               <Loader2 className="w-8 h-8 animate-spin text-[#3498db]" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {disciplines?.map((discipline) => (
                 <Card
                   key={discipline.id}
@@ -187,7 +187,7 @@ export default function Quiz() {
     const discipline = disciplines?.find((d) => d.id === disciplineId);
 
     return (
-      <div className="flex-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 flex items-center justify-center">
         <Card className="card-iph max-w-md w-full text-center">
           <div className="mb-6">
             <Trophy className="w-16 h-16 text-[#f4c542] mx-auto mb-4" />
@@ -229,18 +229,18 @@ export default function Quiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2 sm:p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Button onClick={handleBackToDisciplines} variant="ghost" className="mb-4">
             ← Voltar
           </Button>
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-[#0a2f44]">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#0a2f44]">
               {disciplines?.find((d) => d.id === disciplineId)?.name}
             </h1>
-            <div className="badge-iph">
+            <div className="badge-iph text-sm sm:text-base">
               Questão {currentQuestionIndex + 1} de {questions?.length}
             </div>
           </div>
@@ -253,38 +253,38 @@ export default function Quiz() {
 
         {/* Score Display */}
         <Card className="card-iph mb-6 bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white">
-          <div className="flex justify-between items-center">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
             <div>
-              <p className="text-sm opacity-80">Pontuação Atual</p>
-              <p className="text-3xl font-bold">{score}</p>
+              <p className="text-xs sm:text-sm opacity-80">Pontuação</p>
+              <p className="text-2xl sm:text-3xl font-bold">{score}</p>
             </div>
             <div>
-              <p className="text-sm opacity-80">Acertos</p>
-              <p className="text-3xl font-bold">{score / 10}</p>
+              <p className="text-xs sm:text-sm opacity-80">Acertos</p>
+              <p className="text-2xl sm:text-3xl font-bold">{score / 10}</p>
             </div>
             <div>
-              <p className="text-sm opacity-80">Tentativas</p>
-              <p className="text-3xl font-bold">{totalAttempts}</p>
+              <p className="text-xs sm:text-sm opacity-80">Tentativas</p>
+              <p className="text-2xl sm:text-3xl font-bold">{totalAttempts}</p>
             </div>
           </div>
         </Card>
 
         {/* Question */}
         <Card className="card-iph mb-8">
-          <h2 className="text-2xl font-bold text-[#0a2f44] mb-8">{currentQuestion.text}</h2>
+          <h2 className="text-lg sm:text-2xl font-bold text-[#0a2f44] mb-6 sm:mb-8">{currentQuestion.text}</h2>
 
           {/* Options */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-2 sm:space-y-4 mb-6 sm:mb-8">
             {currentQuestion.options.map((option, index) => (
               <div
                 key={index}
                 onClick={() => !answered && handleSelectAnswer(index)}
-                className={`option-card-iph ${
+                className={`option-card-iph text-sm sm:text-base ${
                   selectedAnswer === index ? 'selected' : ''
                 } ${answered && index === correctAnswerIndex ? 'correct' : ''} ${answered && selectedAnswer === index && index !== correctAnswerIndex ? 'incorrect' : ''}`}
               >
-                <span className="font-bold text-lg mr-3">{String.fromCharCode(65 + index)}.</span>
-                <span>{option}</span>
+                <span className="font-bold text-base sm:text-lg mr-2 sm:mr-3">{String.fromCharCode(65 + index)}.</span>
+                <span className="flex-1">{option}</span>
               </div>
             ))}
           </div>
@@ -306,7 +306,7 @@ export default function Quiz() {
         {/* Next Button */}
         {answered && (
           <div className="flex justify-end">
-            <Button onClick={handleNextQuestion} className="btn-iph-primary">
+            <Button onClick={handleNextQuestion} className="btn-iph-primary text-sm sm:text-base">
               {currentQuestionIndex === (questions?.length || 0) - 1 ? 'Ver Resultados' : 'Próxima Questão'}{' '}
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
