@@ -101,3 +101,15 @@
 - [x] Adicionar quiz para disciplinas faltantes
 - [x] Testar navegação de Material e Quiz
 - [x] Criar checkpoint final
+
+
+## Correções de UI/UX - Sessão Atual
+
+- [x] Corrigir delay visual no feedback de quiz (mostrar verde imediato sem vermelho)
+- [x] Corrigir mapeamento de 'Interação Homem-Máquina' (ihm)
+- [x] Adicionar material educativo para Protocolo de Comunicação
+- [x] Adicionar material educativo para Sistemas Operativos
+- [x] Adicionar material educativo para Arquitetura de Computadores
+- [x] Renomear 'gestão-men' para 'gestão-dados' no sistema
+- [x] Testar fluxo completo end-to-end
+- [x] Criar checkpoint final

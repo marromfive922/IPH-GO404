@@ -78,12 +78,12 @@ export default function Quiz() {
         selectedOptionIndex: optionIndex,
       });
 
-      // Server returns the correct answer index
+      // Server returns the correct answer index - set it immediately for instant visual feedback
       setCorrectAnswerIndex(result.correctOptionIndex);
       setScore(result.score);
       setTotalAttempts(result.totalAttempts);
 
-      // Auto-advance after 3s if correct (immediate green feedback)
+      // Auto-advance after 3s if correct (instant green feedback, no red)
       if (result.isCorrect) {
         setTimeout(() => {
           handleNextQuestion();
@@ -275,18 +275,24 @@ export default function Quiz() {
 
           {/* Options */}
           <div className="space-y-2 sm:space-y-4 mb-6 sm:mb-8">
-            {currentQuestion.options.map((option, index) => (
-              <div
-                key={index}
-                onClick={() => !answered && handleSelectAnswer(index)}
-                className={`option-card-iph text-sm sm:text-base ${
-                  selectedAnswer === index ? 'selected' : ''
-                } ${answered && index === correctAnswerIndex ? 'correct' : ''} ${answered && selectedAnswer === index && index !== correctAnswerIndex ? 'incorrect' : ''}`}
-              >
-                <span className="font-bold text-base sm:text-lg mr-2 sm:mr-3">{String.fromCharCode(65 + index)}.</span>
-                <span className="flex-1">{option}</span>
-              </div>
-            ))}
+            {currentQuestion.options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = index === correctAnswerIndex;
+              const isIncorrect = answered && isSelected && !isCorrect;
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => !answered && handleSelectAnswer(index)}
+                  className={`option-card-iph text-sm sm:text-base ${
+                    isSelected ? 'selected' : ''
+                  } ${answered && isCorrect ? 'correct' : ''} ${isIncorrect ? 'incorrect' : ''}`}
+                >
+                  <span className="font-bold text-base sm:text-lg mr-2 sm:mr-3">{String.fromCharCode(65 + index)}.</span>
+                  <span className="flex-1">{option}</span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Feedback */}
