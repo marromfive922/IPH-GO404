@@ -76,7 +76,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white py-12 sm:py-16 md:py-24">
+      <div className="bg-gradient-to-r from-[#0a2f44] to-[#1a4b6d] text-white py-16 sm:py-20 md:py-32 lg:py-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
             <div>

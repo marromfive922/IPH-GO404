@@ -113,3 +113,11 @@
 - [x] Renomear 'gestão-men' para 'gestão-dados' no sistema
 - [x] Testar fluxo completo end-to-end
 - [x] Criar checkpoint final
+
+
+## Correções de Responsividade - Sessão Atual
+
+- [x] Corrigir fundo azul "Prepare-se para o Sucesso" que não aparece no PC
+- [x] Melhorar espaçamento do texto no material educativo (letras muito juntas)
+- [x] Testar layout em PC e mobile
+- [x] Criar checkpoint final

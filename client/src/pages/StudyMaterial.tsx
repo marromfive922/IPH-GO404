@@ -95,7 +95,7 @@ export default function StudyMaterial() {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card className="card-iph p-8 md:p-12">
-          <div className="prose prose-sm md:prose-base max-w-none text-[#0a2f44] whitespace-pre-wrap">
+          <div className="material-content text-[#0a2f44] whitespace-pre-wrap">
             {material.content}
           </div>
         </Card>
