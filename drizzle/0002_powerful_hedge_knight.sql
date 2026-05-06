@@ -1,1 +1,0 @@
-ALTER TABLE `disciplines` ADD `material` text;

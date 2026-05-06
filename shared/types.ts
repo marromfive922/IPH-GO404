@@ -1,7 +1,7 @@
-/**
- * Unified type exports
- * Import shared types from this single entry point.
- */
+import { initTRPC } from "@trpc/server";
+import { z } from "zod";
 
-export type * from "../drizzle/schema";
-export * from "./_core/errors";
+const t = initTRPC.create();
+
+export const router = t.router;
+export const publicProcedure = t.procedure;

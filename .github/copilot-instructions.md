@@ -30,7 +30,7 @@ Use `pnpm` for all workspace commands.
 - `pnpm install` — install dependencies
 - `pnpm dev` — run development server with HMR
 - `pnpm build` — build frontend and bundle backend
-- `pnpm build:ghpages` — build a static frontend into `docs/` for GitHub Pages
+- `pnpm build:ghpages` — build a static frontend into the root directory for GitHub Pages (use base "/" for user/organization pages)
 - `pnpm start` — run production server from `dist`
 - `pnpm check` — type-check with `tsc`
 - `pnpm test` — run tests with `vitest`
@@ -58,7 +58,10 @@ Use `pnpm` for all workspace commands.
 
 - Use `vitest` for tests.
 - Use `pnpm build` and `pnpm start` for production verification.
-- There is no explicit deployment config in the repository.
+- For GitHub Pages, use `pnpm build:ghpages` to build static files to the root directory.
+- Set GitHub Pages source to the root folder.
+- For user/organization pages (repository named `username.github.io`), use base "/".
+- For project pages (other repository names), use base "/repository-name/".
 
 ## Example assistant prompts
 
