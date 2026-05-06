@@ -150,9 +150,15 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
+const BASE_PATH = process.env.VITE_BASE ?? "/";
+const BUILD_OUT_DIR = process.env.VITE_OUT_DIR
+  ? path.resolve(import.meta.dirname, process.env.VITE_OUT_DIR)
+  : path.resolve(import.meta.dirname, "dist/public");
+
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 
 export default defineConfig({
+  base: BASE_PATH,
   plugins,
   resolve: {
     alias: {
@@ -165,7 +171,7 @@ export default defineConfig({
   root: path.resolve(import.meta.dirname, "client"),
   publicDir: path.resolve(import.meta.dirname, "client", "public"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: BUILD_OUT_DIR,
     emptyOutDir: true,
   },
   server: {
